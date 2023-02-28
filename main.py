@@ -3,10 +3,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 from plotly.subplots import make_subplots
-
+st.set_page_config(page_title="Aavegotchi", page_icon="chart_with_upwards_trend", layout='centered', initial_sidebar_state='auto')
 st.title('PVP Balance Sheets')
-
-
+st.image('aarena.png')
 @st.cache(allow_output_mutation=True)
 def load_dataset():
     import requests
@@ -24,9 +23,11 @@ def load_dataset():
             result['deathsByType.' + i] = k
         for i, k in result['killsByType'].items():
             result['killsByType.' + i] = k
+        for i, k in result['tips'].items():
+            result['tip.' + i] = k
 
     dataframe = pd.DataFrame(results)
-    dataframe = dataframe.drop(['tips','destructibles','damageDealtByType','damageTakenByType','deathsByType','killsByType'],axis = 1)
+    dataframe = dataframe.drop(['destructibles','damageDealtByType','damageTakenByType','deathsByType','killsByType'],axis = 1)
     dataframe['sessionTimeMins'] = dataframe['sessionTime'] / 60
     dataframe['SessionTimeHours'] = dataframe['sessionTimeMins'] / 60
     ls_ids = list(dataframe['id'].dropna().astype(int).values)
@@ -144,13 +145,14 @@ def load_dataset():
     df_merged['KDR'] = df_merged['kills'] / df_merged['deaths']
     df_merged = df_merged[df_merged['deaths'] > 0]
     df_merged = df_merged[df_merged['kills'] > 0]
+    df_merged['owner'] = df_merged['owner'].apply(lambda x: x['id'])
     return df_merged
 
 
 import pandas as pd
 
 df = load_dataset()
-st.dataframe(df)
+
 df['KDR'] = df['kills'] / df['deaths']
 df = df[(df['kills'] > 0) & (df['deaths'] > 0)]
 df_kdr = df.groupby(['Types'])['KDR'].mean().sort_values(ascending=False)
@@ -163,8 +165,12 @@ kpi_ranged = len(df[df['RorM'] == 'Ranged'])
 kpi_melee = len(df[df['RorM'] == 'Melee'])
 kpi_kdr_melee = df[df['RorM'] == 'Melee']['KDR'].mean()
 kpi_kdr_ranged = df[df['RorM'] == 'Ranged']['KDR'].mean()
-
-col1, col2 = st.columns(2)
+kpi_addresses = df['owner'].nunique()
+kpi_FUD = df['tip.FUD'].sum()
+kpi_FOMO = df['tip.FOMO'].sum()
+kpi_ALPHA = df['tip.ALPHA'].sum()
+kpi_KEK = df['tip.KEK'].sum()
+col1, col2, col3,col4 = st.columns(4)
 with col1:
     st.metric('Average minutes played', round(kpi_mins, 2),delta = round(kpi_mins - 31 ,2))
     st.metric('Number of Melee gotchis', kpi_melee,delta = kpi_melee - 129)
@@ -172,14 +178,23 @@ with col1:
 
 with col2:
     st.metric('Total hours played', round(kpi_hours, 2),delta = round(kpi_hours - 152,2))
-    st.metric('KDR Melee mean', round(kpi_kdr_melee, 2), delta = round(kpi_kdr_melee - 1.24 ,2))
-    st.metric('KDR Ranged mean', round(kpi_kdr_ranged, 2), delta = round(kpi_kdr_ranged -0.92,2))
+    st.metric('KDR Melee mean', round(kpi_kdr_melee, 2), delta = round(kpi_kdr_melee - 1.24 ,2),help = 'Kill Death Ratio')
+    st.metric('KDR Ranged mean', round(kpi_kdr_ranged, 2), delta = round(kpi_kdr_ranged -0.92,2),help = 'Kill Death Ratio')
 
     df_filtered = df.groupby(['Types', 'RorM'])[['RorM', 'KDR']].mean().sort_values(
         by='KDR', ascending=False)
     df_reindex = []
     for t1, t2 in df_filtered.index:
         df_reindex.append(str(t1))
+with col3:
+    st.metric('Unique addresses',kpi_addresses, delta = kpi_addresses - 196)
+    st.metric('FUD tipped',round(kpi_FUD),delta = round(kpi_FUD))
+    st.metric('FOMO tipped',round(kpi_FOMO),delta = round(kpi_FOMO))
+
+with col4:
+    st.metric('Alpha tipped', round(kpi_ALPHA),delta = round(kpi_ALPHA))
+    st.metric('KEK tipped', round(kpi_KEK), delta = round(kpi_KEK))
+    st.metric('Highest mean KDR',df.groupby(['Types'])['KDR'].mean().sort_values(ascending = False).index[0],help = 'Healthy Ranged Sprinter')
 
 
 fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type','Types Count','Minutes played total per Type'))
@@ -200,3 +215,90 @@ fig5.update_layout(showlegend=False, height=900, width=900)
 
 
 st.plotly_chart(fig5)
+
+st.subheader('Different Gotchi Classes')
+col_mk,col_mk2 = st.columns(2)
+with col_mk:
+    st.markdown('''
+    NRG + AGG + SPK - BRN + ---------- Sprinter Ranger  \t  **Very effective sprinting combo dps chase you** \n
+    NRG - AGG + SPK - BRN + ---------- Healthy Sprinter Ranger\t **More hp at the cost of less total AP**\n
+    NRG + AGG + SPK + BRN + ---------- Ethereal Ranger\t **No AP regen but gains evasion** \n
+    NRG + AGG - SPK - BRN + ---------- Stone Ranger\t **Range tank that can hit hard and has quite AP**\n
+    NRG - AGG - SPK - BRN + ---------- Diamond Ranger\t **Range tank with less ap but Healthy**\n
+    NRG - AGG + SPK + BRN + ---------- Explosive Ranger\t **Low AP low AP Regen they nuke and empty fast**\n
+    NRG + AGG - SPK + BRN + ---------- Ethereal Stone Ranger\t **Tanky and evasive range dps?**\n 
+    NRG - AGG - SPK + BRN + ---------- Ethereal Diamond Ranger\t **Tanky evasive and healthy but no AP at all**\n''')
+with col_mk2:
+    st.markdown('''
+NRG + AGG + SPK - BRN - ---------- Sprinter Warrior\t **Counter melee part** \n
+NRG - AGG + SPK - BRN - ---------- Healthy Sprinter Warrior\t **Counter melee part** \n
+NRG + AGG + SPK + BRN - ---------- Ethereal Warrior\t **Counter melee part** \n
+NRG + AGG - SPK - BRN - ---------- Stone Warrior\t **Counter melee part** \n
+NRG - AGG - SPK - BRN - ---------- Diamond Warrior\t **Counter melee part** \n
+NRG - AGG + SPK + BRN - ---------- Explosive Warrior\t **Counter melee part** \n
+NRG + AGG - SPK + BRN - ---------- Ethereal Stone Warrior\t **Counter melee part** \n
+NRG - AGG - SPK + BRN - ---------- Ethereal Diamond Warrior\t **Counter melee part** \n
+''')
+
+st.title('Traits Distribution')
+
+import plotly.express as px
+
+
+fig_box = px.box(df, y="NRG", color="RorM",
+             notched=True, # used notched shape
+             title="Box plot NRG",
+             hover_data=["RorM"] # add day column to hover data
+            )
+fig_box.update_layout(height=350, width=350)
+fig_box2 = px.box(df, y="AGG", color="RorM",
+             notched=True, # used notched shape
+             title="Box plot AGG",
+             hover_data=["RorM"] # add day column to hover data
+            )
+fig_box2.update_layout(height=350, width=350)
+cols1,cols2 = st.columns(2)
+with cols1:
+    st.plotly_chart(fig_box,height=300,width=300)
+with cols2:
+    st.plotly_chart(fig_box2,heigh=100,width=100)
+cols3,cols4 = st.columns(2)
+fig_box3 = px.box(df, y="SPK", color="RorM",
+             notched=True, # used notched shape
+             title="Box plot SPK",
+             hover_data=["RorM"] # add day column to hover data
+            )
+fig_box3.update_layout(height=350, width=350)
+fig_box4 = px.box(df, y="BRN", color="RorM",
+             notched=True, # used notched shape
+             title="Box plot BRN",
+             hover_data=["RorM"] # add day column to hover data
+            )
+fig_box4.update_layout(height=350, width=350)
+with cols3:
+    st.plotly_chart(fig_box3)
+with cols4:
+    st.plotly_chart(fig_box4)
+
+
+df['HPK'] = df['hits']/df['kills']
+df['HPM'] = df['hits']/df['sessionTimeMins']
+figs = make_subplots(rows=3, cols=3, subplot_titles=('Hits/Kills avg', 'Avg Minutes Played', 'Avg Hits','Avg Kills','Avg Deaths','Hits/min avg'))
+figs.add_trace(go.Bar(x=df.groupby(['Types'])['HPK'].mean().sort_values(ascending = False).index,
+                      y=df.groupby(['Types'])['HPK'].mean().sort_values(ascending = False).values), 1, 1)
+figs.add_trace(go.Bar(x=df.groupby(['Types'])['sessionTimeMins'].mean().sort_values(ascending = False).index,
+                      y=df.groupby(['Types'])['sessionTimeMins'].mean().sort_values(ascending = False).values), 1, 2)
+figs.add_trace(
+    go.Bar(x=df.groupby(['Types'])['hits'].mean().sort_values(ascending = False).index,
+                      y=df.groupby(['Types'])['hits'].mean().sort_values(ascending = False).values), 1, 3)
+figs.add_trace(
+    go.Bar(x=df.groupby(['Types'])['kills'].mean().sort_values(ascending = False).index,
+                      y=df.groupby(['Types'])['kills'].mean().sort_values(ascending = False).values), 2, 1)
+figs.add_trace(go.Bar(x=df.groupby(['Types'])['deaths'].mean().sort_values(ascending = False).index,
+                      y=df.groupby(['Types'])['deaths'].mean().sort_values(ascending = False).values), 2, 2)
+figs.add_trace(go.Bar(x=df.groupby(['Types'])['HPM'].mean().sort_values(ascending = False).index,
+                      y=df.groupby(['Types'])['HPM'].mean().sort_values(ascending = False).values), 2, 3)
+figs.update_layout(showlegend=False, height=900, width=900)
+
+
+st.plotly_chart(figs)
