@@ -241,7 +241,7 @@ with col3:
         by='KDR', ascending=False)
     df_reindex = []
     for t1, t2 in df_filtered.index:
-        df_reindex.append(str(t1) + ' ' + t2)
+        df_reindex.append(str(t1))
     fig3 = px.bar(df, x=df_reindex,
                   y=df_filtered['KDR'].values,
                   text_auto=True)
