@@ -166,14 +166,14 @@ kpi_kdr_ranged = df[df['RorM'] == 'Ranged']['KDR'].mean()
 
 col1, col2 = st.columns(2)
 with col1:
-    st.metric('Average minutes played', round(kpi_mins, 2),delta = kpi_mins - 31 )
+    st.metric('Average minutes played', round(kpi_mins, 2),delta = round(kpi_mins - 31 ,2))
     st.metric('Number of Melee gotchis', kpi_melee,delta = kpi_melee - 129)
-    st.metric('Number of Ranged gotchis', kpi_ranged,delta = kpi_ranged - 165 )
+    st.metric('Number of Ranged gotchis', kpi_ranged,delta = round(kpi_ranged - 165 ,2))
 
 with col2:
-    st.metric('Total hours played', round(kpi_hours, 2),delta = kpi_hours - 152)
-    st.metric('KDR Melee mean', round(kpi_kdr_melee, 2), delta = kpi_kdr_melee - 1.24 )
-    st.metric('KDR Ranged mean', round(kpi_kdr_ranged, 2), delta = kpi_kdr_ranged -0.92)
+    st.metric('Total hours played', round(kpi_hours, 2),delta = round(kpi_hours - 152,2))
+    st.metric('KDR Melee mean', round(kpi_kdr_melee, 2), delta = round(kpi_kdr_melee - 1.24 ,2))
+    st.metric('KDR Ranged mean', round(kpi_kdr_ranged, 2), delta = round(kpi_kdr_ranged -0.92,2))
 
     df_filtered = df.groupby(['Types', 'RorM'])[['RorM', 'KDR']].mean().sort_values(
         by='KDR', ascending=False)
