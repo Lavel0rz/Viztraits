@@ -182,7 +182,7 @@ with col2:
         df_reindex.append(str(t1))
 
 
-fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type'))
+fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type','Types Count','Minutes played total per Type'))
 fig5.add_trace(go.Bar(x=["RushDMG", "SnipeDMG"],
                       y=[df['damageDealtByType.rush'].sum(), df['damageDealtByType.snipe'].sum()]), 1, 1)
 fig5.add_trace(go.Bar(x=["MeleeDMG", "RangedDMG"],
@@ -192,6 +192,10 @@ fig5.add_trace(
 fig5.add_trace(
     go.Bar(x=df_reindex,
                   y=df_filtered['KDR'].values), 2, 1)
+fig5.add_trace(go.Bar(x = df['Types'].value_counts().index,
+                     y = df['Types'].value_counts().values), 2, 2)
+fig5.add_trace(go.Bar(x = df.groupby(['Types'])['sessionTimeMins'].sum().sort_values(ascending=False).index,
+                     y = df.groupby(['Types'])['sessionTimeMins'].sum().sort_values(ascending=False).values), 2, 3)
 fig5.update_layout(showlegend=False, height=900, width=900)
 
 
