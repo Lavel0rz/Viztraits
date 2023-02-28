@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+from plotly.subplots import make_subplots
 
 st.title('PVP Balance Sheets')
 
@@ -130,7 +131,7 @@ def load_dataset():
     for i in ls_explosive_warriors:
         df_traits.loc[i, 'Types'] = 'Explosive Warrior'
     for i in ls_ethereal_stone_warriors:
-        df_traits.loc[i, 'Types'] = 'Ethereal Warrior'
+        df_traits.loc[i, 'Types'] = 'Ethereal Stone Warrior'
     for i in ls_ethereal_diamong_warriors:
         df_traits.loc[i, 'Types'] = 'Ethereal Diamond Warrior'
 
@@ -172,104 +173,24 @@ with col2:
     st.metric('KDR Melee mean', round(kpi_kdr_melee, 2))
     st.metric('KDR Ranged mean', round(kpi_kdr_ranged, 2))
 
-fig = px.bar(df, x=["MeleeKills", "RangedKills"], y=[df['killsByType.melee'].sum(), df['killsByType.range'].sum()],
-             text_auto=True, title='Ranged vs Melee Total Kills')
-fig.update_layout(
-    title=go.layout.Title(
-        text="Ranged vs Melee Total Kills",
-        xref="paper",
-        x=0
-    ),
-    xaxis=go.layout.XAxis(
-        title=go.layout.xaxis.Title(
-            text="Melee / Range",
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
-            )
-        )
-    ),
-    yaxis=go.layout.YAxis(
-        title=go.layout.yaxis.Title(
-            text="Total Kills",
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
-            )
-        )
-    )
-)
-
-col3, col4, col5, col6, col7, col8 = st.columns(6)
-fig2 = px.bar(df, x=["RushDMG", "SnipeDMG"],
-              y=[df['damageDealtByType.rush'].sum(), df['damageDealtByType.snipe'].sum()],
-              text_auto=True)
-fig2.update_layout(
-    title=go.layout.Title(
-        text="Rush vs Snipe Total Damage",
-        xref="paper",
-        x=0
-    ),
-    xaxis=go.layout.XAxis(
-        title=go.layout.xaxis.Title(
-            text="Rush / Snipe",
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
-            )
-        )
-    ),
-    yaxis=go.layout.YAxis(
-        title=go.layout.yaxis.Title(
-            text="Total Damage",
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
-            )
-        )
-    )
-)
-
-with col3:
-    st.plotly_chart(fig)
-    st.plotly_chart(fig2)
     df_filtered = df.groupby(['Types', 'RorM'])[['RorM', 'KDR']].mean().sort_values(
         by='KDR', ascending=False)
     df_reindex = []
     for t1, t2 in df_filtered.index:
         df_reindex.append(str(t1))
-    fig3 = px.bar(df, x=df_reindex,
-                  y=df_filtered['KDR'].values,
-                  text_auto=True)
-    fig3.update_layout(
-        title=go.layout.Title(
-            text="KDR by Type and Melee/Range",
-            xref="paper",
-            x=0
-        ),
-        xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(
-                text="Types",
-                font=dict(
-                    family="Courier New, monospace",
-                    size=18,
-                    color="#7f7f7f"
-                )
-            )
-        ),
-        yaxis=go.layout.YAxis(
-            title=go.layout.yaxis.Title(
-                text="KDR",
-                font=dict(
-                    family="Courier New, monospace",
-                    size=18,
-                    color="#7f7f7f"
-                )
-            )
-        )
-    )
-    st.plotly_chart(fig3)
+
+
+fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type'))
+fig5.add_trace(go.Bar(x=["RushDMG", "SnipeDMG"],
+                      y=[df['damageDealtByType.rush'].sum(), df['damageDealtByType.snipe'].sum()]), 1, 1)
+fig5.add_trace(go.Bar(x=["MeleeDMG", "RangedDMG"],
+                      y=[df['damageDealtByType.melee'].sum(), df['damageDealtByType.range'].sum()]), 1, 2)
+fig5.add_trace(
+    go.Bar(x=["MeleeKills", "RangedKills"], y=[df['killsByType.melee'].sum(), df['killsByType.range'].sum()]), 1, 3)
+fig5.add_trace(
+    go.Bar(x=df_reindex,
+                  y=df_filtered['KDR'].values), 2, 1)
+fig5.update_layout(showlegend=False, height=900, width=900)
+
+
+st.plotly_chart(fig5)
