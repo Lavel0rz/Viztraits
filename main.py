@@ -24,7 +24,9 @@ def load_dataset():
             result['deathsByType.' + i] = k
         for i, k in result['killsByType'].items():
             result['killsByType.' + i] = k
+
     dataframe = pd.DataFrame(results)
+    dataframe = dataframe.drop(['tips','destructibles','damageDealtByType','damageTakenByType','deathsByType','killsByType'],axis = 1)
     dataframe['sessionTimeMins'] = dataframe['sessionTime'] / 60
     dataframe['SessionTimeHours'] = dataframe['sessionTimeMins'] / 60
     ls_ids = list(dataframe['id'].dropna().astype(int).values)
