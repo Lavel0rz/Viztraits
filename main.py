@@ -194,7 +194,7 @@ with col3:
 with col4:
     st.metric('Alpha tipped', round(kpi_ALPHA),delta = round(kpi_ALPHA))
     st.metric('KEK tipped', round(kpi_KEK), delta = round(kpi_KEK))
-    st.metric('Highest mean KDR',df.groupby(['Types'])['KDR'].mean().sort_values(ascending = False).index[0],help = 'Healthy Ranged Sprinter')
+    st.metric('Highest mean KDR',df.groupby(['Types'])['KDR'].mean().sort_values(ascending = False).index[0],help = df.groupby(['Types'])['KDR'].mean().sort_values(ascending = False).index[0])
 
 
 fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type','Types Count','Minutes played total per Type'))
