@@ -214,7 +214,9 @@ fig5.add_trace(go.Bar(x = df.groupby(['Types'])['sessionTimeMins'].sum().sort_va
 fig5.add_trace(go.Bar(x=["RushKILLS", "SnipeKILLS"],
                       y=[df['killsByType.rush'].sum(), df['killsByType.snipe'].sum()]), 3, 1)
 fig5.add_trace(go.Bar(x=["Rush+MeleeKills", "Snipe+RangeKILLS"],
-                      y=[df['killsByType.rush'].sum()+df['killsByType.melee'].sum(), df['killsByType.snipe'].sum()+df['killsByType.range'].sum()]), 3, 1)
+                      y=[df['killsByType.rush'].sum()+df['killsByType.melee'].sum(), df['killsByType.snipe'].sum()+df['killsByType.range'].sum()]), 3, 2)
+fig5.add_trace(go.Bar(x=["Rush+MeleeDMG", "Snipe+RangeDMG"],
+                      y=[df['damageDealtByType.melee'].sum()+df['damageDealtByType.rush'].sum(), df['damageDealtByType.range'].sum()+df['damageDealtByType.snipe'].sum()]), 3, 3)
 fig5.update_layout(showlegend=False, height=900, width=900)
 
 
