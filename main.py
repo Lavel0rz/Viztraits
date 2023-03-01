@@ -283,22 +283,66 @@ with cols4:
 
 df['HPK'] = df['hits']/df['kills']
 df['HPM'] = df['hits']/df['sessionTimeMins']
-figs = make_subplots(rows=3, cols=3, subplot_titles=('Hits/Kills avg', 'Avg Minutes Played', 'Avg Hits','Avg Kills','Avg Deaths','Hits/min avg'))
-figs.add_trace(go.Bar(x=df.groupby(['Types'])['HPK'].mean().sort_values(ascending = False).index,
-                      y=df.groupby(['Types'])['HPK'].mean().sort_values(ascending = False).values), 1, 1)
-figs.add_trace(go.Bar(x=df.groupby(['Types'])['sessionTimeMins'].mean().sort_values(ascending = False).index,
-                      y=df.groupby(['Types'])['sessionTimeMins'].mean().sort_values(ascending = False).values), 1, 2)
-figs.add_trace(
-    go.Bar(x=df.groupby(['Types'])['hits'].mean().sort_values(ascending = False).index,
-                      y=df.groupby(['Types'])['hits'].mean().sort_values(ascending = False).values), 1, 3)
-figs.add_trace(
-    go.Bar(x=df.groupby(['Types'])['kills'].mean().sort_values(ascending = False).index,
-                      y=df.groupby(['Types'])['kills'].mean().sort_values(ascending = False).values), 2, 1)
-figs.add_trace(go.Bar(x=df.groupby(['Types'])['deaths'].mean().sort_values(ascending = False).index,
-                      y=df.groupby(['Types'])['deaths'].mean().sort_values(ascending = False).values), 2, 2)
-figs.add_trace(go.Bar(x=df.groupby(['Types'])['HPM'].mean().sort_values(ascending = False).index,
-                      y=df.groupby(['Types'])['HPM'].mean().sort_values(ascending = False).values), 2, 3)
-figs.update_layout(showlegend=False, height=900, width=900)
 
 
-st.plotly_chart(figs)
+labels1 = df.groupby(['Types'])['HPM'].mean().sort_values(ascending = False).index
+values1 = df.groupby(['Types'])['HPM'].mean().sort_values(ascending = False).values
+labels2 = df.groupby(['Types'])['deaths'].mean().sort_values(ascending = False).index
+values2 = df.groupby(['Types'])['deaths'].mean().sort_values(ascending = False).values
+labels3 = df.groupby(['Types'])['kills'].mean().sort_values(ascending = False).index
+values3 = df.groupby(['Types'])['kills'].mean().sort_values(ascending = False).values
+labels4 = df.groupby(['Types'])['hits'].mean().sort_values(ascending = False).index
+values4 = df.groupby(['Types'])['hits'].mean().sort_values(ascending = False).values
+labels5 = df.groupby(['Types'])['sessionTimeMins'].mean().sort_values(ascending = False).index
+values5 = df.groupby(['Types'])['sessionTimeMins'].mean().sort_values(ascending = False).values
+labels6 = df.groupby(['Types'])['HPK'].mean().sort_values(ascending = False).index
+values6 = df.groupby(['Types'])['HPK'].mean().sort_values(ascending = False).values
+st.title('Types Analysis')
+# Use `hole` to create a donut-like pie chart
+pie1,pie2 = st.columns(2)
+with pie1:
+    fig_pie = go.Figure(data=[go.Pie(labels=labels1, values=values1, hole=.3)])
+    fig_pie.update_layout(showlegend=True, height=400, width=400, title='Hits / Minute Avg')
+    st.plotly_chart(fig_pie, height=400, width=400)
+with pie2:
+    fig_pie2 = go.Figure(data=[go.Pie(labels=labels2, values=values2, hole=.3)])
+    fig_pie2.update_layout(showlegend=True, height=400, width=400, title='Deaths Avg')
+    st.plotly_chart(fig_pie2, height=400, width=400)
+
+pie3,pie4 = st.columns(2)
+with pie3:
+    fig_pie = go.Figure(data=[go.Pie(labels=labels3, values=values3, hole=.3)])
+    fig_pie.update_layout(showlegend=True, height=400, width=400, title='Kills Avg')
+    st.plotly_chart(fig_pie, height=400, width=400)
+with pie4:
+    fig_pie2 = go.Figure(data=[go.Pie(labels=labels4, values=values4, hole=.3)])
+    fig_pie2.update_layout(showlegend=True, height=400, width=400, title='Avg Hits')
+    st.plotly_chart(fig_pie2, height=400, width=400)
+pie5,pie6 = st.columns(2)
+with pie5:
+    fig_pie = go.Figure(data=[go.Pie(labels=labels5, values=values5, hole=.3)])
+    fig_pie.update_layout(showlegend=True, height=400, width=400, title='Avg Mins Played')
+    st.plotly_chart(fig_pie, height=400, width=400)
+with pie6:
+    fig_pie2 = go.Figure(data=[go.Pie(labels=labels6, values=values6, hole=.3)])
+    fig_pie2.update_layout(showlegend=True, height=400, width=400, title='Hits/Kills avg')
+    st.plotly_chart(fig_pie2, height=400, width=400)
+
+
+import plotly.graph_objects as go
+
+df = pd.DataFrame(dict(
+    value=[99, 101, 90, 95,55,70,65,80],
+    variable=['BRN', 'AGG', 'SPK', 'NRG', 'BRN', 'AGG', 'SPK', 'NRG'],
+    gotchis=['Gotchi1', 'Gotchi1', 'Gotchi1', 'Gotchi1',
+               'Gotchi2', 'Gotchi2', 'Gotchi2', 'Gotchi2']))
+
+fig = px.line_polar(df, r='value', theta='variable', line_close=True,
+                    color='gotchis')
+fig.update_traces(fill='toself')
+
+# st.pyplot(fig3)
+
+st.markdown("<h1 style='text-align: center; color: blue;'>CRS gotchi comparator in the works</h1>",
+            unsafe_allow_html=True)
+st.plotly_chart(figure_or_data=fig)
