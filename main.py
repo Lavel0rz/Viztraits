@@ -211,6 +211,9 @@ fig5.add_trace(go.Bar(x = df['Types'].value_counts().index,
                      y = df['Types'].value_counts().values), 2, 2)
 fig5.add_trace(go.Bar(x = df.groupby(['Types'])['sessionTimeMins'].sum().sort_values(ascending=False).index,
                      y = df.groupby(['Types'])['sessionTimeMins'].sum().sort_values(ascending=False).values), 2, 3)
+fig5.add_trace(go.Bar(x=["RushKILLS", "SnipeKILLS"],
+                      y=[df['killsByType.rush'].sum(), df['killsByType.snipe'].sum()]), 3, 1)
+
 fig5.update_layout(showlegend=False, height=900, width=900)
 
 
