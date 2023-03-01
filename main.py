@@ -197,7 +197,7 @@ with col4:
     st.metric('Highest mean KDR',df.groupby(['Types'])['KDR'].mean().sort_values(ascending = False).index[0],help = df.groupby(['Types'])['KDR'].mean().sort_values(ascending = False).index[0])
 
 
-fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type','Types Count','Minutes played total per Type'))
+fig5 = make_subplots(rows=3, cols=3, subplot_titles=('Rush vs Snipe DMG', 'Melee vs Range DMG', 'Melee vs Range Kills','KDR mean by Type','Types Count','Minutes played total per Type','Rush vs Snipe Kills'))
 fig5.add_trace(go.Bar(x=["RushDMG", "SnipeDMG"],
                       y=[df['damageDealtByType.rush'].sum(), df['damageDealtByType.snipe'].sum()]), 1, 1)
 fig5.add_trace(go.Bar(x=["MeleeDMG", "RangedDMG"],
