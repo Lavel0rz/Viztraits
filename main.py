@@ -184,8 +184,8 @@ with col1:
 
 with col2:
     st.metric('Total hours played', round(kpi_hours, 2),delta = round(kpi_hours - 152,2))
-    st.metric('KDR Melee mean', round(kpi_kdr_melee, 2), delta = round(kpi_kdr_melee - 1.24 ,2),help = 'Kill Death Ratio')
-    st.metric('KDR Ranged mean', round(kpi_kdr_ranged, 2), delta = round(kpi_kdr_ranged -0.92,2),help = 'Kill Death Ratio')
+    st.metric('KDR Melee', round(kpi_kdr_melee, 2), delta = round(kpi_kdr_melee - 1.24 ,2),help = 'Kill Death Ratio')
+    st.metric('KDR Ranged', round(kpi_kdr_ranged, 2), delta = round(kpi_kdr_ranged -0.92,2),help = 'Kill Death Ratio')
 
     df_filtered = df.groupby(['Types', 'RorM'])[['RorM', 'KDR']].mean().sort_values(
         by='KDR', ascending=False)
