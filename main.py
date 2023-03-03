@@ -174,7 +174,7 @@ kpi_FOMO = df['tip.FOMO'].sum()
 kpi_ALPHA = df['tip.ALPHA'].sum()
 kpi_KEK = df['tip.KEK'].sum()
 col1, col2, col3,col4 = st.columns(4)
-figpie = px.pie(df, values=df['sessionTimeMins'], names=totales['RorM'], title='Los colores importan',color='RorM',color_discrete_map={'Ranged':'yellow',
+figpie = px.pie(df, values=df['sessionTimeMins'], names=df['RorM'], title='Los colores importan',color='RorM',color_discrete_map={'Ranged':'yellow',
                                                                                                                                'Melee':'blue'},width=450,height=450)
 st.plotly_chart(figpie)
 with col1:
