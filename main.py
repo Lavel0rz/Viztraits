@@ -174,6 +174,9 @@ kpi_FOMO = df['tip.FOMO'].sum()
 kpi_ALPHA = df['tip.ALPHA'].sum()
 kpi_KEK = df['tip.KEK'].sum()
 col1, col2, col3,col4 = st.columns(4)
+figpie = px.pie(df, values=df['sessionTimeMins'], names=totales['RorM'], title='Los colores importan',color='RorM',color_discrete_map={'Ranged':'yellow',
+                                                                                                                               'Melee':'blue'},width=450,height=450)
+st.plotly_chart(figpie)
 with col1:
     st.metric('Average minutes played', round(kpi_mins, 2),delta = round(kpi_mins - 31 ,2))
     st.metric('Number of Melee gotchis', kpi_melee,delta = kpi_melee - 129)
