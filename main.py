@@ -6,10 +6,8 @@ from plotly.subplots import make_subplots
 st.set_page_config(page_title="Aavegotchi", page_icon="chart_with_upwards_trend", layout='centered', initial_sidebar_state='auto')
 st.title('PVP Balance Sheets')
 st.image('aarena.png')
-checkbo = st.checkbox('REFRESH DATA')
-if checkbo:
-    st.experimental_singleton.clear()
-@st.experimental_singleton
+
+@st.cache
 def load_dataset():
     import requests
     url = 'https://api.gotchiverse.io/leaderboard/all'
