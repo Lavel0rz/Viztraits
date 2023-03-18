@@ -7,7 +7,7 @@ st.set_page_config(page_title="Aavegotchi", page_icon="chart_with_upwards_trend"
 st.title('PVP Balance Sheets')
 st.image('aarena.png')
 
-@st.cache(allow_output_mutation=True)
+@st.cache_data
 def load_dataset():
     import requests
     url = 'https://api.gotchiverse.io/leaderboard/all'
